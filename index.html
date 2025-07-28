@@ -5,109 +5,163 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Barney Gym App</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', sans-serif; }
-    .app-header { font-size: 2rem; font-weight: 700; }
-    .phase-btn { font-size: 1.25rem; border-radius: 1rem; font-weight: 600; }
-    .day-btn { font-size: 1.125rem; border-radius: 1rem; font-weight: 600; }
-    .exercise-card { border-radius: 1rem; }
-    .big-btn { font-size: 1.25rem; border-radius: 1.5rem; font-weight: 600; }
-    .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    body { 
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    }
+    .app-header { 
+      font-size: 1.875rem; 
+      font-weight: 700; 
+      letter-spacing: -0.025em;
+    }
+    .phase-btn { 
+      font-size: 1rem; 
+      border-radius: 0.75rem; 
+      font-weight: 500;
+      transition: all 0.2s ease-in-out;
+    }
+    .day-btn { 
+      font-size: 1rem; 
+      border-radius: 0.75rem; 
+      font-weight: 500;
+      transition: all 0.2s ease-in-out;
+    }
+    .exercise-card { 
+      border-radius: 0.75rem;
+      transition: all 0.2s ease-in-out;
+    }
+    .big-btn { 
+      font-size: 1rem; 
+      border-radius: 0.75rem; 
+      font-weight: 500;
+      transition: all 0.2s ease-in-out;
+    }
+    .gradient-bg { 
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    }
+    .accent-gradient {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    }
+    .card-shadow {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    .hover-lift {
+      transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+    .hover-lift:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
   </style>
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col items-center justify-center p-4">
+<body class="min-h-screen flex flex-col items-center justify-center p-6">
   <!-- Start Screen -->
-  <div id="start-screen" class="w-full max-w-sm flex flex-col items-center">
-    <div class="gradient-bg text-white p-8 rounded-2xl shadow-xl mb-6 text-center">
-      <div class="text-4xl mb-2">🦖</div>
-      <div class="app-header mb-2">Barney Gym App</div>
-      <div class="text-lg opacity-90">"So easy, Barney can teach it."</div>
+  <div id="start-screen" class="w-full max-w-md flex flex-col items-center">
+    <div class="gradient-bg text-white p-8 rounded-2xl card-shadow mb-8 text-center w-full">
+      <div class="text-3xl mb-4 opacity-80">💪</div>
+      <div class="app-header mb-3">Barney Gym App</div>
+      <div class="text-base opacity-75 font-light">"So easy, Barney can teach it."</div>
     </div>
     <div class="w-full space-y-4">
-      <button id="start-btn" class="big-btn bg-indigo-600 text-white w-full py-4 shadow-lg hover:bg-indigo-700 transition-colors duration-200">Start Workout</button>
-      <button id="competition-btn" class="big-btn bg-gradient-to-r from-yellow-500 to-orange-500 text-white w-full py-4 shadow-lg hover:from-yellow-600 hover:to-orange-600 transition-all duration-200">🏆 Competition Zone</button>
+      <button id="start-btn" class="big-btn accent-gradient text-white w-full py-4 card-shadow hover-lift font-medium">
+        Start Workout
+      </button>
+      <button id="competition-btn" class="big-btn bg-white text-gray-800 w-full py-4 card-shadow hover-lift font-medium border border-gray-200">
+        🏆 Competition Zone
+      </button>
     </div>
   </div>
 
   <!-- Phase Selection Screen -->
-  <div id="phase-screen" class="w-full max-w-sm flex flex-col items-center hidden">
+  <div id="phase-screen" class="w-full max-w-md flex flex-col items-center hidden">
     <div class="app-header text-gray-800 text-center mb-8">Choose Your Phase</div>
     <div class="w-full space-y-4">
-      <button class="phase-btn bg-gradient-to-r from-red-500 to-red-600 text-white w-full py-6 shadow-lg hover:shadow-xl transition-all duration-200 phase-select" data-phase="1">
-        <div class="text-lg font-bold">Phase I</div>
-        <div class="text-sm opacity-90">Weeks 4-6 • Strength</div>
+      <button class="phase-btn bg-white text-gray-800 w-full py-6 card-shadow hover-lift border border-gray-200 phase-select" data-phase="1">
+        <div class="text-lg font-semibold">Phase I</div>
+        <div class="text-sm text-gray-600 mt-1">Weeks 4-6 • Strength</div>
       </button>
-      <button class="phase-btn bg-gradient-to-r from-blue-500 to-blue-600 text-white w-full py-6 shadow-lg hover:shadow-xl transition-all duration-200 phase-select" data-phase="2">
-        <div class="text-lg font-bold">Phase II</div>
-        <div class="text-sm opacity-90">Weeks 7-9 • Muscle Fiber</div>
+      <button class="phase-btn bg-white text-gray-800 w-full py-6 card-shadow hover-lift border border-gray-200 phase-select" data-phase="2">
+        <div class="text-lg font-semibold">Phase II</div>
+        <div class="text-sm text-gray-600 mt-1">Weeks 7-9 • Muscle Fiber</div>
       </button>
-      <button class="phase-btn bg-gradient-to-r from-green-500 to-green-600 text-white w-full py-6 shadow-lg hover:shadow-xl transition-all duration-200 phase-select" data-phase="3">
-        <div class="text-lg font-bold">Phase III</div>
-        <div class="text-sm opacity-90">Weeks 10-12 • Muscle Pump</div>
+      <button class="phase-btn bg-white text-gray-800 w-full py-6 card-shadow hover-lift border border-gray-200 phase-select" data-phase="3">
+        <div class="text-lg font-semibold">Phase III</div>
+        <div class="text-sm text-gray-600 mt-1">Weeks 10-12 • Muscle Pump</div>
       </button>
     </div>
     <div class="flex w-full justify-center mt-8">
-      <button class="big-btn bg-gray-200 text-gray-700 px-6 py-3 hover:bg-gray-300 transition-colors duration-200 home-btn">🏠 Home</button>
+      <button class="big-btn bg-gray-100 text-gray-700 px-6 py-3 hover:bg-gray-200 transition-colors duration-200 home-btn">
+        Home
+      </button>
     </div>
   </div>
 
   <!-- Day Selection Screen -->
-  <div id="day-screen" class="w-full max-w-sm flex flex-col items-center hidden">
+  <div id="day-screen" class="w-full max-w-md flex flex-col items-center hidden">
     <div class="app-header text-gray-800 text-center mb-8">Choose Your Day</div>
     <div class="w-full space-y-4">
-      <button class="day-btn bg-gradient-to-r from-amber-400 to-amber-500 text-gray-800 w-full py-6 shadow-lg hover:shadow-xl transition-all duration-200 day-select" data-day="1">
-        <div class="text-xl font-bold">Day 1</div>
+      <button class="day-btn bg-white text-gray-800 w-full py-6 card-shadow hover-lift border border-gray-200 day-select" data-day="1">
+        <div class="text-xl font-semibold">Day 1</div>
       </button>
-      <button class="day-btn bg-gradient-to-r from-pink-400 to-pink-500 text-gray-800 w-full py-6 shadow-lg hover:shadow-xl transition-all duration-200 day-select" data-day="2">
-        <div class="text-xl font-bold">Day 2</div>
+      <button class="day-btn bg-white text-gray-800 w-full py-6 card-shadow hover-lift border border-gray-200 day-select" data-day="2">
+        <div class="text-xl font-semibold">Day 2</div>
       </button>
     </div>
     <div class="flex w-full justify-between mt-8">
-      <button class="big-btn bg-gray-200 text-gray-700 px-6 py-3 hover:bg-gray-300 transition-colors duration-200 back-btn">⬅️ Back</button>
-      <button class="big-btn bg-gray-200 text-gray-700 px-6 py-3 hover:bg-gray-300 transition-colors duration-200 home-btn">🏠 Home</button>
+      <button class="big-btn bg-gray-100 text-gray-700 px-6 py-3 hover:bg-gray-200 transition-colors duration-200 back-btn">
+        Back
+      </button>
+      <button class="big-btn bg-gray-100 text-gray-700 px-6 py-3 hover:bg-gray-200 transition-colors duration-200 home-btn">
+        Home
+      </button>
     </div>
   </div>
 
   <!-- Exercise List Screen -->
-  <div id="exercise-screen" class="w-full max-w-sm flex flex-col items-center hidden">
+  <div id="exercise-screen" class="w-full max-w-md flex flex-col items-center hidden">
     <div class="app-header text-gray-800 text-center mb-6">Your Workout</div>
     <div id="exercise-list" class="w-full space-y-4 mb-6">
       <!-- Exercise cards will be injected here -->
     </div>
     <div class="flex w-full justify-between">
-      <button class="big-btn bg-gray-200 text-gray-700 px-6 py-3 hover:bg-gray-300 transition-colors duration-200 back-btn">⬅️ Back</button>
-      <button class="big-btn bg-gray-200 text-gray-700 px-6 py-3 hover:bg-gray-300 transition-colors duration-200 home-btn">🏠 Home</button>
+      <button class="big-btn bg-gray-100 text-gray-700 px-6 py-3 hover:bg-gray-200 transition-colors duration-200 back-btn">
+        Back
+      </button>
+      <button class="big-btn bg-gray-100 text-gray-700 px-6 py-3 hover:bg-gray-200 transition-colors duration-200 home-btn">
+        Home
+      </button>
     </div>
   </div>
 
   <!-- Competition Zone Screen -->
-  <div id="competition-screen" class="w-full max-w-sm flex flex-col items-center hidden">
+  <div id="competition-screen" class="w-full max-w-md flex flex-col items-center hidden">
     <div class="app-header text-gray-800 text-center mb-6">🏆 Competition Zone</div>
     
     <!-- Submission Form -->
-    <div class="w-full bg-white rounded-xl shadow-lg p-6 mb-6">
-      <h3 class="text-lg font-bold text-gray-800 mb-4">Submit Your Challenge</h3>
+    <div class="w-full bg-white rounded-xl card-shadow p-6 mb-6">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Submit Your Challenge</h3>
       
       <!-- Exercise Name Input -->
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700 mb-2">Exercise Name</label>
         <input type="text" id="exercise-name-input" placeholder="e.g., Push-Ups, Pull-Ups, Squats" 
-               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200">
       </div>
       
       <!-- Reps Input -->
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700 mb-2">Number of Reps</label>
         <input type="number" id="reps-input" min="1" placeholder="0" 
-               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200">
       </div>
       
       <!-- Video Upload -->
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700 mb-2">Upload Video (Optional)</label>
         <input type="file" id="competition-video-input" accept="video/*" class="hidden">
-        <button id="upload-video-btn" class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white py-3 px-4 rounded-lg hover:from-yellow-600 hover:to-orange-600 transition-all duration-200">
+        <button id="upload-video-btn" class="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-200 transition-all duration-200 border border-gray-300">
           📹 Choose Video File
         </button>
         <div id="video-preview" class="mt-2 hidden">
@@ -115,23 +169,23 @@
             Your browser does not support the video tag.
           </video>
           <button id="remove-video-btn" class="mt-2 bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 transition-colors duration-200">
-            🗑️ Remove Video
+            Remove Video
           </button>
         </div>
       </div>
       
       <!-- Submit Button -->
-      <button id="submit-challenge-btn" class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-4 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 font-semibold">
+      <button id="submit-challenge-btn" class="w-full accent-gradient text-white py-3 px-4 rounded-lg hover-lift transition-all duration-200 font-medium">
         🏆 Submit Challenge
       </button>
     </div>
     
     <!-- Leaderboard -->
-    <div class="w-full bg-white rounded-xl shadow-lg p-6 mb-6">
+    <div class="w-full bg-white rounded-xl card-shadow p-6 mb-6">
       <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-bold text-gray-800">🏅 Leaderboard</h3>
+        <h3 class="text-lg font-semibold text-gray-800">🏅 Leaderboard</h3>
         <button id="reset-leaderboard-btn" class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 transition-colors duration-200">
-          🔄 Reset
+          Reset
         </button>
       </div>
       <div id="leaderboard-list" class="space-y-3">
@@ -141,7 +195,9 @@
     
     <!-- Home Button -->
     <div class="flex w-full justify-center">
-      <button class="big-btn bg-gray-200 text-gray-700 px-6 py-3 hover:bg-gray-300 transition-colors duration-200 home-btn">🏠 Home</button>
+      <button class="big-btn bg-gray-100 text-gray-700 px-6 py-3 hover:bg-gray-200 transition-colors duration-200 home-btn">
+        Home
+      </button>
     </div>
   </div>
 

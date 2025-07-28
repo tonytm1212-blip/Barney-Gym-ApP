@@ -294,21 +294,21 @@ function replaceExercise(phase, day, exerciseIndex, newExercise) {
 function showExerciseReplacementModal(phase, day, exerciseIndex, currentExercise) {
   // Create modal HTML
   const modalHTML = `
-    <div id="exercise-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-hidden">
-        <div class="bg-gray-100 px-6 py-3 border-b">
-          <h3 class="text-xl font-bold">Change Workout</h3>
-          <p class="text-gray-600">Current: ${currentExercise}</p>
+    <div id="exercise-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-xl max-w-2xl w-full max-h-[80vh] overflow-hidden card-shadow">
+        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+          <h3 class="text-xl font-semibold text-gray-800">Change Workout</h3>
+          <p class="text-gray-600 text-sm mt-1">Current: ${currentExercise}</p>
         </div>
         <div class="p-6 overflow-y-auto max-h-[60vh]">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             ${Object.entries(exerciseLibrary).map(([category, exercises]) => `
-              <div class="border rounded-lg p-4">
-                <h4 class="font-bold text-lg mb-3 text-blue-600">${category}</h4>
-                <div class="space-y-2">
+              <div class="border border-gray-200 rounded-lg p-4">
+                <h4 class="font-semibold text-lg mb-3 text-blue-600">${category}</h4>
+                <div class="space-y-1">
                   ${exercises.map(exercise => `
                     <button 
-                      class="w-full text-left p-2 hover:bg-blue-50 transition-colors ${exercise === currentExercise ? 'bg-blue-100 font-semibold' : ''}"
+                      class="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200 text-gray-700 ${exercise === currentExercise ? 'bg-blue-50 border border-blue-200 font-medium' : ''}"
                       onclick="selectReplacementExercise('${phase}', ${day}, ${exerciseIndex}, '${exercise}')"
                     >
                       ${exercise}
@@ -319,8 +319,8 @@ function showExerciseReplacementModal(phase, day, exerciseIndex, currentExercise
             `).join('')}
           </div>
         </div>
-        <div class="bg-gray-100 px-6 py-3 border-t">
-          <button onclick="closeExerciseModal()" class="bg-gray-50 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</button>
+        <div class="bg-gray-50 px-6 py-4 border-t border-gray-200">
+          <button onclick="closeExerciseModal()" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors duration-200 font-medium">Cancel</button>
         </div>
       </div>
     </div>
@@ -503,50 +503,46 @@ function renderExercises() {
   if (!selectedPhase || !selectedDay) return;
   const phase = workouts[selectedPhase];
   const day = phase.days[selectedDay];
-  const gradients = {
-    1: 'bg-gradient-to-r from-red-500 to-red-600',
-    2: 'bg-gradient-to-r from-blue-500 to-blue-600',
-    3: 'bg-gradient-to-r from-green-500 to-green-600',
-  };
+  
   day.forEach((ex, index) => {
     const completed = isExerciseCompleted(selectedPhase, selectedDay, index);
     const weight = getExerciseWeight(selectedPhase, selectedDay, index);
     const card = document.createElement('div');
-    card.className = `exercise-card ${gradients[selectedPhase]} text-white p-6 shadow-lg hover:shadow-xl transition-all duration-200 flex flex-col items-center ${completed ? 'opacity-60 bg-green-500' : ''}`;
+    card.className = `exercise-card bg-white text-gray-800 p-6 card-shadow hover-lift flex flex-col items-center ${completed ? 'opacity-60 bg-green-50 border-2 border-green-200' : 'border border-gray-200'}`;
     const videoUrl = getVideo(selectedPhase, selectedDay, ex.name);
     const hasVideo = !!videoUrl;
     card.innerHTML = `
-      <div class="flex items-center justify-center mb-3 w-full">
-        <div class="text-xl font-semibold text-center flex-1">${ex.name}</div>
-        <button class="ml-2 check-complete-btn ${completed ? 'bg-green-600' : 'bg-white bg-opacity-20'} hover:bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors duration-200 border-2 border-white" data-index="${index}" title="Mark Complete">
-          ${completed ? '✔️' : '⬜'}
+      <div class="flex items-center justify-center mb-4 w-full">
+        <div class="text-lg font-semibold text-center flex-1">${ex.name}</div>
+        <button class="ml-3 check-complete-btn ${completed ? 'bg-green-500' : 'bg-gray-100'} hover:bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors duration-200 border-2 border-gray-200" data-index="${index}" title="Mark Complete">
+          ${completed ? '✓' : '○'}
         </button>
       </div>
-      <div class="text-lg font-bold bg-white bg-opacity-20 px-4 py-2 rounded-full mb-2">Sets/Reps: ${ex.sets}</div>
+      <div class="text-base font-medium bg-gray-100 px-4 py-2 rounded-lg mb-4 text-gray-700">Sets/Reps: ${ex.sets}</div>
       <div class="flex items-center mb-4 w-full">
-        <label for="weight-input-${index}" class="mr-2 text-white text-sm">Weight (lbs):</label>
-        <input id="weight-input-${index}" type="number" min="0" step="1" class="w-20 px-2 py-1 rounded text-gray-900 text-center" value="${weight}" placeholder="0" />
+        <label for="weight-input-${index}" class="mr-3 text-gray-700 text-sm font-medium">Weight (lbs):</label>
+        <input id="weight-input-${index}" type="number" min="0" step="1" class="w-20 px-3 py-2 rounded-lg border border-gray-300 text-gray-900 text-center focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200" value="${weight}" placeholder="0" />
       </div>
-      <div class="flex space-x-2 mb-2">
-        <button class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm transition-colors duration-200 place-exercise-btn" data-phase="${selectedPhase}" data-day="${selectedDay}" data-index="${index}" data-exercise="${ex.name}">
-          🔄 Change Workout
+      <div class="flex space-x-2 mb-4">
+        <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm transition-colors duration-200 place-exercise-btn border border-gray-300" data-phase="${selectedPhase}" data-day="${selectedDay}" data-index="${index}" data-exercise="${ex.name}">
+          Change Workout
         </button>
       </div>
       ${hasVideo ? `
-        <video id="video-${index}" class="w-full max-w-xs rounded-lg mb-3" controls>
+        <video id="video-${index}" class="w-full max-w-xs rounded-lg mb-4" controls>
           <source src="${videoUrl}" type="video/mp4">
           Your browser does not support the video tag.
         </video>
         <div class="flex space-x-2">
-          <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition-colors duration-200 delete-video-btn" data-exercise="${ex.name}">
-            🗑️ Delete Video
+          <button class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm transition-colors duration-200 delete-video-btn border border-red-500" data-exercise="${ex.name}">
+            Remove Video
           </button>
         </div>
       ` : `
         <div class="flex space-x-2">
           <input type="file" id="video-input-${index}" accept="video/*" class="hidden" data-exercise="${ex.name}">
-          <button class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-3 py-1 rounded text-sm transition-colors duration-200 upload-video-btn" data-exercise="${ex.name}" data-index="${index}">
-            📹 Upload Video
+          <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm transition-colors duration-200 upload-video-btn border border-gray-300" data-exercise="${ex.name}" data-index="${index}">
+            Upload Video
           </button>
         </div>
       `}
