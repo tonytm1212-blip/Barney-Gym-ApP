@@ -31,6 +31,153 @@ const exerciseLibrary = {
   ]
 };
 
+// Competition Zone Functions
+function getLeaderboardKey() {
+  return 'competition_leaderboard';
+}
+
+function getLeaderboard() {
+  const leaderboard = localStorage.getItem(getLeaderboardKey());
+  return leaderboard ? JSON.parse(leaderboard) : [];
+}
+
+function saveLeaderboard(leaderboard) {
+  localStorage.setItem(getLeaderboardKey(), JSON.stringify(leaderboard));
+}
+
+function getNotificationKey() {
+  return 'competition_notifications';
+}
+
+function getNotifications() {
+  const notifications = localStorage.getItem(getNotificationKey());
+  return notifications ? JSON.parse(notifications) : [];
+}
+
+function saveNotifications(notifications) {
+  localStorage.setItem(getNotificationKey(), JSON.stringify(notifications));
+}
+
+function addChallenge(exerciseName, reps, videoBlob = null) {
+  const leaderboard = getLeaderboard();
+  const newChallenge = {
+    id: Date.now(),
+    exerciseName: exerciseName.trim(),
+    reps: parseInt(reps),
+    videoUrl: videoBlob ? URL.createObjectURL(videoBlob) : null,
+    timestamp: new Date().toLocaleString(),
+    date: new Date().toISOString()
+  };
+  
+  // Check if this is a new record for this exercise
+  const existingRecord = leaderboard.find(entry => entry.exerciseName.toLowerCase() === exerciseName.toLowerCase());
+  const isNewRecord = !existingRecord || newChallenge.reps > existingRecord.reps;
+  
+  // Add to leaderboard
+  leaderboard.push(newChallenge);
+  
+  // Sort by reps (highest first)
+  leaderboard.sort((a, b) => b.reps - a.reps);
+  
+  // Keep only top 20 entries
+  const topEntries = leaderboard.slice(0, 20);
+  
+  saveLeaderboard(topEntries);
+  
+  // If it's a new record, add notification
+  if (isNewRecord) {
+    const notifications = getNotifications();
+    notifications.push({
+      id: Date.now(),
+      message: `🏆 New record! ${exerciseName}: ${reps} reps!`,
+      timestamp: new Date().toISOString(),
+      read: false
+    });
+    saveNotifications(notifications);
+  }
+  
+  return newChallenge;
+}
+
+function renderLeaderboard() {
+  const leaderboardList = document.getElementById('leaderboard-list');
+  const leaderboard = getLeaderboard();
+  
+  if (leaderboard.length === 0) {
+    leaderboardList.innerHTML = `
+      <div class="text-center text-gray-500 py-8">
+        <div class="text-4xl mb-2">🏆</div>
+        <div class="text-lg font-semibold">No challenges yet!</div>
+        <div class="text-sm">Be the first to submit a challenge!</div>
+      </div>
+    `;
+    return;
+  }
+  
+  leaderboardList.innerHTML = leaderboard.map((entry, index) => {
+    const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
+    const isRecord = index === 0 || (index > 0 && entry.reps === leaderboard[0].reps);
+    
+    return `
+      <div class="bg-gray-50 rounded-lg p-4 ${isRecord ? 'border-2 border-yellow-400 bg-yellow-50' : ''}">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center">
+            <span class="text-2xl mr-3">${medal}</span>
+            <div>
+              <div class="font-bold text-lg">${entry.exerciseName}</div>
+              <div class="text-sm text-gray-600">${entry.timestamp}</div>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="text-2xl font-bold text-green-600">${entry.reps}</div>
+            <div class="text-xs text-gray-500">reps</div>
+          </div>
+        </div>
+        ${entry.videoUrl ? `
+          <div class="mt-3">
+            <video class="w-full rounded-lg" controls>
+              <source src="${entry.videoUrl}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function resetLeaderboard() {
+  if (confirm('Are you sure you want to reset the leaderboard? This action cannot be undone.')) {
+    const leaderboard = getLeaderboard();
+    
+    // Clean up video URLs
+    leaderboard.forEach(entry => {
+      if (entry.videoUrl) {
+        URL.revokeObjectURL(entry.videoUrl);
+      }
+    });
+    
+    saveLeaderboard([]);
+    saveNotifications([]);
+    renderLeaderboard();
+    alert('Leaderboard has been reset!');
+  }
+}
+
+function checkNotifications() {
+  const notifications = getNotifications();
+  const unreadNotifications = notifications.filter(n => !n.read);
+  
+  if (unreadNotifications.length > 0) {
+    const latestNotification = unreadNotifications[unreadNotifications.length - 1];
+    alert(`🏆 COMPETITION UPDATE!\n\n${latestNotification.message}\n\nKeep pushing your limits! 💪`);
+    
+    // Mark as read
+    notifications.forEach(n => n.read = true);
+    saveNotifications(notifications);
+  }
+}
+
 const workouts = {
   1: {
     name: 'Phase I',
@@ -219,14 +366,106 @@ const startScreen = document.getElementById('start-screen');
 const phaseScreen = document.getElementById('phase-screen');
 const dayScreen = document.getElementById('day-screen');
 const exerciseScreen = document.getElementById('exercise-screen');
+const competitionScreen = document.getElementById('competition-screen');
 const exerciseList = document.getElementById('exercise-list');
 
 let selectedPhase = null;
 let selectedDay = null;
+let selectedCompetitionVideo = null;
 
 function showScreen(screen) {
-  [startScreen, phaseScreen, dayScreen, exerciseScreen].forEach(s => s.classList.add('hidden'));
+  [startScreen, phaseScreen, dayScreen, exerciseScreen, competitionScreen].forEach(s => s.classList.add('hidden'));
   screen.classList.remove('hidden');
+  
+  // If showing competition screen, render leaderboard
+  if (screen === competitionScreen) {
+    renderLeaderboard();
+    checkNotifications();
+  }
+}
+
+// Competition Zone Event Listeners
+const competitionBtn = document.getElementById('competition-btn');
+if (competitionBtn) {
+  competitionBtn.onclick = () => showScreen(competitionScreen);
+}
+
+const uploadVideoBtn = document.getElementById('upload-video-btn');
+const competitionVideoInput = document.getElementById('competition-video-input');
+const videoPreview = document.getElementById('video-preview');
+const previewVideo = document.getElementById('preview-video');
+const removeVideoBtn = document.getElementById('remove-video-btn');
+
+if (uploadVideoBtn) {
+  uploadVideoBtn.onclick = () => competitionVideoInput.click();
+}
+
+if (competitionVideoInput) {
+  competitionVideoInput.onchange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      selectedCompetitionVideo = file;
+      const videoUrl = URL.createObjectURL(file);
+      previewVideo.src = videoUrl;
+      videoPreview.classList.remove('hidden');
+      uploadVideoBtn.textContent = '📹 Video Selected';
+      uploadVideoBtn.classList.add('bg-green-500', 'hover:bg-green-600');
+      uploadVideoBtn.classList.remove('from-yellow-500', 'to-orange-500', 'hover:from-yellow-600', 'hover:to-orange-600');
+    }
+  };
+}
+
+if (removeVideoBtn) {
+  removeVideoBtn.onclick = () => {
+    selectedCompetitionVideo = null;
+    competitionVideoInput.value = '';
+    videoPreview.classList.add('hidden');
+    uploadVideoBtn.textContent = '📹 Choose Video File';
+    uploadVideoBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
+    uploadVideoBtn.classList.add('from-yellow-500', 'to-orange-500', 'hover:from-yellow-600', 'hover:to-orange-600');
+  };
+}
+
+const submitChallengeBtn = document.getElementById('submit-challenge-btn');
+if (submitChallengeBtn) {
+  submitChallengeBtn.onclick = () => {
+    const exerciseName = document.getElementById('exercise-name-input').value.trim();
+    const reps = document.getElementById('reps-input').value;
+    
+    if (!exerciseName) {
+      alert('Please enter an exercise name!');
+      return;
+    }
+    
+    if (!reps || reps < 1) {
+      alert('Please enter a valid number of reps!');
+      return;
+    }
+    
+    // Submit the challenge
+    const newChallenge = addChallenge(exerciseName, reps, selectedCompetitionVideo);
+    
+    // Clear form
+    document.getElementById('exercise-name-input').value = '';
+    document.getElementById('reps-input').value = '';
+    selectedCompetitionVideo = null;
+    competitionVideoInput.value = '';
+    videoPreview.classList.add('hidden');
+    uploadVideoBtn.textContent = '📹 Choose Video File';
+    uploadVideoBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
+    uploadVideoBtn.classList.add('from-yellow-500', 'to-orange-500', 'hover:from-yellow-600', 'hover:to-orange-600');
+    
+    // Show success message
+    alert(`🏆 Challenge submitted successfully!\n\n${exerciseName}: ${reps} reps\n\nKeep pushing your limits! 💪`);
+    
+    // Re-render leaderboard
+    renderLeaderboard();
+  };
+}
+
+const resetLeaderboardBtn = document.getElementById('reset-leaderboard-btn');
+if (resetLeaderboardBtn) {
+  resetLeaderboardBtn.onclick = resetLeaderboard;
 }
 
 const startBtn = document.getElementById('start-btn');
